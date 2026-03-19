@@ -1,0 +1,6 @@
+!x64/
+!x64/*.dll
+!x64/*.pdb
+!arm64/
+!arm64/*.dll
+!arm64/*.pdb

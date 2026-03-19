@@ -1,0 +1,27 @@
+﻿<Project>
+  <UsingTask TaskName="GetExtensionsPath" AssemblyFile="$(VsSDKAssemblyFile)" Architecture="x86" />
+  <UsingTask TaskName="GetDeploymentPathFromVsixManifest" AssemblyFile="$(VsSDKAssemblyFile)" Architecture="x86" />
+
+  <Target
+    Name="GetVsixDeploymentPath"
+    Condition="'$(DeployExtension)'=='true' and '$(CreateVsixContainer)'=='true'"
+    DependsOnTargets="$(GetVsixDeploymentPathDependsOn)">
+
+    <GetExtensionsPath
+      DevenvInstallationDirectory="$(DeployTargetInstallationDirectory)"
+      RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)" >
+      <Output TaskParameter="LocalExtensionsPath" PropertyName="ExtensionsPath"/>
+    </GetExtensionsPath>
+
+    <GetDeploymentPathFromVsixManifest
+      Condition="Exists('$(IntermediateVsixManifest)')"
+      ExtensionsPath="$(ExtensionsPath)"
+      VsixManifest="$(IntermediateVsixManifest)"
+      DevenvInstallationDirectory="$(DeployTargetInstallationDirectory)"
+      RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)">
+      <Output TaskParameter="DeploymentPath" PropertyName="VsixDeploymentPath"/>
+      <Output TaskParameter="VsixID" PropertyName="VsixID"/>
+      <Output TaskParameter="VsixVersion" PropertyName="VsixVersion"/>
+    </GetDeploymentPathFromVsixManifest>
+  </Target>
+</Project>

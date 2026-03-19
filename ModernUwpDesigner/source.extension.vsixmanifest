@@ -29,6 +29,12 @@
         <InstallationTarget Version="[17.0,)" Id="Microsoft.VisualStudio.Enterprise">
             <ProductArchitecture>arm64</ProductArchitecture>
         </InstallationTarget>
+        <InstallationTarget Id="Microsoft.VisualStudio.Blend" Version="[17.0,)">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Id="Microsoft.VisualStudio.Blend" Version="[17.0,)">
+            <ProductArchitecture>arm64</ProductArchitecture>
+        </InstallationTarget>
     </Installation>
     <Dependencies>
         <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.7.2,)" />
