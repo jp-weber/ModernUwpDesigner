@@ -58,7 +58,7 @@ namespace ModernUwpDesigner
             return 0;
         }
 
-        internal static void LaunchInjectedBlend(string cmdArgs = null, string shimArgs = null)
+        internal static DTE2 LaunchInjectedBlend(string cmdArgs = null, string shimArgs = null)
         {
             var currentAssemblyLocation = typeof(BlendShim).Assembly.Location;
             var blendExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Blend.exe");
@@ -120,15 +120,16 @@ namespace ModernUwpDesigner
                     "Process Creation Failed",
                     OLEMSGICON.OLEMSGICON_CRITICAL);
 
-                return;
+                return null;
             }
 
+            DTE2 dte = null;
             bool dteLoaded = false;
             var task = Task.Run(async () =>
             {
                 while (!processHandle.HasExited)
                 {
-                    if (GetDTE(pid) is not null)
+                    if ((dte = GetDTE(pid)) is not null)
                     {
                         dteLoaded = true;
                         break;
@@ -150,7 +151,7 @@ namespace ModernUwpDesigner
                     "Operation Timeout",
                     OLEMSGICON.OLEMSGICON_CRITICAL);
 
-                return;
+                return null;
             }
             else if (!dteLoaded)
             {
@@ -160,7 +161,7 @@ namespace ModernUwpDesigner
                     "Process Exited Prematurely",
                     OLEMSGICON.OLEMSGICON_CRITICAL);
 
-                return;
+                return null;
             }
 
             var assemblyDir = Path.GetDirectoryName(typeof(BlendShim).Assembly.Location);
@@ -179,7 +180,7 @@ namespace ModernUwpDesigner
                         "Memory Allocation Failed",
                         OLEMSGICON.OLEMSGICON_CRITICAL);
 
-                    return;
+                    return null;
                 }
 
                 fixed (byte* pBlendShimDll = blendShimDllBytes)
@@ -195,12 +196,13 @@ namespace ModernUwpDesigner
                         "Remote Thread Creation Failed",
                         OLEMSGICON.OLEMSGICON_CRITICAL);
 
-                    return;
+                    return null;
                 }
 
                 WaitForSingleObject(thread, uint.MaxValue);
                 CloseHandle(thread);
                 processHandle?.Dispose();
+                return dte;
             }
         }
 

@@ -1,28 +1,24 @@
-﻿using EnvDTE80;
+﻿using System;
+using EnvDTE80;
+using System.Threading;
+using System.Reflection;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using MonoMod.RuntimeDetour;
+using ModernUwpDesigner.Common;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.DesignTools.DesignerContract;
-using Microsoft.VisualStudio.DesignTools.DesignerHost;
-using Microsoft.VisualStudio.DesignTools.DesignerHost.HostServices;
-using Microsoft.VisualStudio.DesignTools.DesignerHost.Platform;
-using Microsoft.VisualStudio.DesignTools.SurfaceDesigner.Documents.Project;
-using Microsoft.VisualStudio.DesignTools.SurfaceDesigner.Views;
-using Microsoft.VisualStudio.DesignTools.Utility;
-using Microsoft.VisualStudio.DesignTools.Utility.Extensions;
-using Microsoft.VisualStudio.DesignTools.UwpDesignerHost;
-using Microsoft.VisualStudio.DesignTools.UwpSurfaceDesigner.Documents;
-using Microsoft.VisualStudio.DesignTools.UwpSurfaceDesigner.Views;
-using Microsoft.VisualStudio.DesignTools.XamlDesignerHost.DesignSurface;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using MonoMod.RuntimeDetour;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Runtime.Versioning;
-using System.Threading;
+using Microsoft.VisualStudio.DesignTools.Utility;
+using Microsoft.VisualStudio.DesignTools.DesignerHost;
+using Microsoft.VisualStudio.DesignTools.UwpDesignerHost;
+using Microsoft.VisualStudio.DesignTools.DesignerContract;
+using Microsoft.VisualStudio.DesignTools.DesignerHost.Platform;
+using Microsoft.VisualStudio.DesignTools.SurfaceDesigner.Views;
+using Microsoft.VisualStudio.DesignTools.UwpSurfaceDesigner.Views;
+using Microsoft.VisualStudio.DesignTools.DesignerHost.HostServices;
+using Microsoft.VisualStudio.DesignTools.SurfaceDesigner.Documents.Project;
+
 using Task = System.Threading.Tasks.Task;
 
 namespace ModernUwpDesigner
@@ -37,6 +33,7 @@ namespace ModernUwpDesigner
     [ProvideAutoLoad(ModernUwpDesignerPackage.BlendUIContextGuidString, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(ModernUwpDesignerPackage.BlendSolutionExistsContextGuidString, PackageAutoLoadFlags.BackgroundLoad)]
     [PackageRegistration(UseManagedResourcesOnly = false, AllowsBackgroundLoading = true)]
+    [InstalledProductRegistration("#103", "#104", Vsix.Version)]
     [Guid(ModernUwpDesignerPackage.PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     public sealed class ModernUwpDesignerPackage : AsyncPackage
@@ -48,9 +45,6 @@ namespace ModernUwpDesigner
 
         private const string BlendUIContextGuidString = "{98163396-3C1D-459A-A5E2-90F7E31A1433}";
         private const string BlendSolutionExistsContextGuidString = "{7D30C25D-A30B-451A-A4D5-9229204E6AA5}";
-
-        private const int MinimumSupportedRuntimeVersion = 10;
-        private const int MinimumSupportedSdkBuild = 26100;
 
         private static Hook _updateRuntimeArchitectureHook;
         private static Hook _incompatibleDesignerRuntimeArchitectureHook;
@@ -85,6 +79,7 @@ namespace ModernUwpDesigner
 
             InitializeDesignerPackage();
             await LaunchBlendCommand.InitializeAsync(this);
+            await DesignInBlendCommand.InitializeAsync(this);
         }
 
         internal static unsafe void InitializeDesignerPackage()
@@ -97,7 +92,7 @@ namespace ModernUwpDesigner
                 { "HostPlatformType", "Microsoft.VisualStudio.DesignTools.UwpDesignerHost.UwpHostPlatform" },
                 { "IsolationUnification", "true" },
                 { "ReferenceAssemblyMode", "None" },
-                { "DefaultTargetFramework", $"{FrameworkNames.NetCoreApp}, Version={MinimumSupportedRuntimeVersion}.0" },
+                { "DefaultTargetFramework", $"{FrameworkNames.NetCoreApp}, Version={Constants.MinimumSupportedRuntimeVersion}.0" },
                 { "UserControlTemplateName", "MyUserControl.xaml" },
                 { "PlatformSurfaceIsolatedGuid", "{D617FC9B-7AE9-4219-B022-359A3D13B875}" },
                 { "SupportsToolboxAutoPopulation", "true" },
@@ -165,7 +160,7 @@ namespace ModernUwpDesigner
 
                 if (hostProject.BuildPlatform.Equals("ARM64", StringComparison.OrdinalIgnoreCase) &&
                     platformIdentifier.TargetFrameworkIdentifier.Equals(FrameworkNames.NetCoreApp, StringComparison.Ordinal) &&
-                    platformIdentifier.TargetFrameworkVersion.Major >= MinimumSupportedRuntimeVersion)
+                    platformIdentifier.TargetFrameworkVersion.Major >= Constants.MinimumSupportedRuntimeVersion)
                 {
                     return false;
                 }
@@ -195,13 +190,9 @@ namespace ModernUwpDesigner
         {
             var og = original(projectStorage);
             if (og is not null &&
-                og.Version.Build >= MinimumSupportedSdkBuild &&
+                og.Version.Build >= Constants.MinimumSupportedSdkBuild &&
                 og.Identifier.Equals(PlatformNames.Windows, StringComparison.Ordinal) &&
-                VSUtilities.GetProjectFilePropertyValue((IVsHierarchy)projectStorage, "DefaultXamlRuntime", _PersistStorageType.PST_PROJECT_FILE)
-                .Equals(XamlRuntimeNames.UAP, StringComparison.Ordinal) &&
-                GetTargetFramework((IVsHierarchy)projectStorage) is { } framework &&
-                framework.Identifier.Equals(FrameworkNames.NetCoreApp, StringComparison.Ordinal) &&
-                framework.Version.Major >= MinimumSupportedRuntimeVersion)
+                ((IVsHierarchy)projectStorage).IsModernUwpProject())
             {
                 og = new(PlatformNames.UAP, og.Version, og.MinVersion);
             }
@@ -209,23 +200,6 @@ namespace ModernUwpDesigner
             return og;
         }
 
-        private static FrameworkName GetTargetFramework(IVsHierarchy hierarchy)
-        {
-            hierarchy = hierarchy.GetEffectiveHierarchy();
-
-            if (hierarchy.GetProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID4.VSHPROPID_TargetFrameworkMoniker, out object obj)
-                != 0)
-            {
-                return null;
-            }
-
-            string text = obj as string;
-            if (string.IsNullOrEmpty(text))
-            {
-                return null;
-            }
-
-            return new(text);
-        }
+        
     }
 }

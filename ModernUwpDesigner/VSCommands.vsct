@@ -68,8 +68,30 @@
           <LocCanonicalName>ModernUwpDesigner.LaunchBlend</LocCanonicalName>
         </Strings>
       </Button>
+
+      <Button guid="guidModernUwpDesignerPackageCmdSet" id="DesignInBlendCommandId" priority="0x0500" type="Button">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_PROJECT_EXPLORE" />
+        <Icon guid="ImageCatalogGuid" id="VisualStudioBlend" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <ButtonText>Design in Blend with Modern UWP Designer...</ButtonText>
+          <CommandName>ModernUwpDesigner.DesignInBlend</CommandName>
+          <CanonicalName>ModernUwpDesigner.DesignInBlend</CanonicalName>
+          <LocCanonicalName>ModernUwpDesigner.DesignInBlend</LocCanonicalName>
+        </Strings>
+      </Button>
     </Buttons>
   </Commands>
+
+  <CommandPlacements>
+    <CommandPlacement guid="guidModernUwpDesignerPackageCmdSet" id="DesignInBlendCommandId" priority="0x0500">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_ITEM_OPEN"/>
+    </CommandPlacement>
+  </CommandPlacements>
+
 
   <Symbols>
     <!-- This is the package guid. -->
@@ -79,6 +101,7 @@
     <GuidSymbol name="guidModernUwpDesignerPackageCmdSet" value="{8ebc6822-9501-41c9-b14b-b00316e47eb6}">
       <IDSymbol name="ModernUwpDesignerGroup" value="0x1020" />
       <IDSymbol name="LaunchBlendCommandId" value="0x0100" />
+      <IDSymbol name="DesignInBlendCommandId" value="0x0101" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>
