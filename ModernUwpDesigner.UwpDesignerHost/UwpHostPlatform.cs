@@ -46,13 +46,15 @@ public class UwpHostPlatform : HostPlatformBase
 
     // DesignTimePropertyId Register(string propertyName, ITypeId valueTypeId, string defaultValue, ITypeId targetTypeId)
 	private static readonly unsafe delegate*<string, ITypeId, string, ITypeId, DesignTimePropertyId> RegisterDesignTimeProperty = (delegate*<string, ITypeId, string, ITypeId, DesignTimePropertyId>)typeof(XamlDesignTimeProperties).GetMethod("Register", BindingFlags.NonPublic | BindingFlags.Static, null, [typeof(string), typeof(ITypeId), typeof(string), typeof(ITypeId)], null).MethodHandle.GetFunctionPointer();
+	//private static readonly unsafe delegate*<string, string, ITypeId, bool, DesignTimePropertyId> RegisterShadow = (delegate*<string, string, ITypeId, bool, DesignTimePropertyId>)typeof(XamlDesignTimeProperties).GetMethod("RegisterShadow", BindingFlags.NonPublic | BindingFlags.Static, null, [typeof(string), typeof(string), typeof(ITypeId), typeof(bool)], null).MethodHandle.GetFunctionPointer();
 
     public static readonly unsafe IPropertyId InvertColorsProperty = RegisterDesignTimeProperty("InvertColors", PlatformTypes.Boolean, "false", XamlTypes.UIElement);
+    //public static readonly unsafe IPropertyId GeometryTransformShadowProperty = RegisterShadow("RuntimeGeometryTransform", "GeometryTransform", XamlTypes.Shape, true);
 
     public UwpHostPlatform(IServiceProvider serviceProvider, PlatformIdentifier platformIdentifier)
 		: this(serviceProvider, platformIdentifier, null)
 	{
-	}
+    }
 
 	protected UwpHostPlatform(IServiceProvider serviceProvider, PlatformIdentifier platformIdentifier, IAppPackageHelper appPackageHelper)
         //: base(serviceProvider, platformIdentifier)

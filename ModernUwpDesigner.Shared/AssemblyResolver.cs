@@ -67,9 +67,21 @@ namespace ModernUwpDesigner.Shared
             {
                 path = Path.Combine(_vsDir, "PrivateAssemblies\\Microsoft.VisualStudio.DesignTools.SurfaceDesigner.dll");
             }
+            else if (requestedName.Name.Equals("Microsoft.VisualStudio.DesignTools.XamlSurfaceDesigner", StringComparison.OrdinalIgnoreCase))
+            {
+                path = Path.Combine(_vsDir, "PrivateAssemblies\\Microsoft.VisualStudio.DesignTools.XamlSurfaceDesigner.dll");
+            }
             else if (requestedName.Name.Equals("Microsoft.VisualStudio.DesignTools.XamlDesignerHost", StringComparison.OrdinalIgnoreCase))
             {
                 path = Path.Combine(_vsDir, "PrivateAssemblies\\Microsoft.VisualStudio.DesignTools.XamlDesignerHost.dll");
+            }
+            else if (requestedName.Name.Equals("Microsoft.VisualStudio.DesignTools.RuntimeHost", StringComparison.OrdinalIgnoreCase))
+            {
+                path = Path.Combine(_vsDir, "PrivateAssemblies\\Microsoft.VisualStudio.DesignTools.RuntimeHost.dll");
+            }
+            else if (requestedName.Name.Equals("Microsoft.VisualStudio.DesignTools.RuntimeHostBase", StringComparison.OrdinalIgnoreCase))
+            {
+                path = Path.Combine(_vsDir, "PrivateAssemblies\\Microsoft.VisualStudio.DesignTools.RuntimeHostBase.dll");
             }
             else if (requestedName.Name.Equals("Microsoft.VisualStudio.Shell.Interop", StringComparison.OrdinalIgnoreCase))
             {

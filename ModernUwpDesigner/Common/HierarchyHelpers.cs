@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.DesignTools.Utility.Extensions;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 
 namespace ModernUwpDesigner.Common
@@ -55,9 +56,14 @@ namespace ModernUwpDesigner.Common
         {
             return VSUtilities.GetProjectFilePropertyValue(hierarchy, "DefaultXamlRuntime", _PersistStorageType.PST_PROJECT_FILE)?
                 .Equals(XamlRuntimeNames.UAP, StringComparison.Ordinal) is true &&
-                hierarchy.GetTargetFramework() is { } framework &&
-                framework.Identifier.Equals(FrameworkNames.NetCoreApp, StringComparison.Ordinal) &&
-                framework.Version.Major >= Constants.MinimumSupportedRuntimeVersion;
+                hierarchy.GetTargetFramework()?.IsModernUwp() is true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool IsModernUwp(this FrameworkName name)
+        {
+            return name.Identifier.Equals(FrameworkNames.NetCoreApp, StringComparison.Ordinal) &&
+                   name.Version.Major >= Constants.MinimumSupportedRuntimeVersion;
         }
     }
 }
