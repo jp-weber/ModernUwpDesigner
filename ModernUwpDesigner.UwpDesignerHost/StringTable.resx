@@ -136,7 +136,7 @@
     <value>Registering package from location {0} has timed out. Restarting your computer may fix this issue if it persists.</value>
   </data>
   <data name="CompatibleRuntimeDownlevelOSSummary" xml:space="preserve">
-    <value>Visual Studio requires a newer version of Windows to display this content. TEST</value>
+    <value>Visual Studio requires a newer version of Windows to display this content.</value>
   </data>
   <data name="CompatibleRuntimeVersionTitle" xml:space="preserve">
     <value>XAML designer requires Windows Update</value>

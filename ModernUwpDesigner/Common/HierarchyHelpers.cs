@@ -56,11 +56,11 @@ namespace ModernUwpDesigner.Common
         {
             return VSUtilities.GetProjectFilePropertyValue(hierarchy, "DefaultXamlRuntime", _PersistStorageType.PST_PROJECT_FILE)?
                 .Equals(XamlRuntimeNames.UAP, StringComparison.Ordinal) is true &&
-                hierarchy.GetTargetFramework()?.IsModernUwp() is true;
+                hierarchy.GetTargetFramework()?.IsModernUwpCapable() is true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool IsModernUwp(this FrameworkName name)
+        internal static bool IsModernUwpCapable(this FrameworkName name)
         {
             return name.Identifier.Equals(FrameworkNames.NetCoreApp, StringComparison.Ordinal) &&
                    name.Version.Major >= Constants.MinimumSupportedRuntimeVersion;

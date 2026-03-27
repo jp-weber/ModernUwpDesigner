@@ -225,7 +225,7 @@ namespace ModernUwpDesigner
                 var platformIdentifier = hostProject.PlatformIdentifier;
 
                 if (hostProject.BuildPlatform.Equals("ARM64", StringComparison.OrdinalIgnoreCase) &&
-                    platformIdentifier.GetTargetFramework()?.IsModernUwp() is true)
+                    platformIdentifier.GetTargetFramework()?.IsModernUwpCapable() is true)
                 {
                     return false;
                 }
@@ -259,7 +259,14 @@ namespace ModernUwpDesigner
                 og.Identifier.Equals(PlatformNames.Windows, StringComparison.Ordinal) &&
                 ((IVsHierarchy)projectStorage).IsModernUwpProject())
             {
-                og = new(PlatformNames.UAP, og.Version, og.MinVersion);
+                var minVersion = og.MinVersion;
+                if (minVersion.Major is 10 &&
+                    minVersion.Build < 16299)
+                {
+                    minVersion = new(10, 0, 16299, 0);
+                }
+
+                og = new(PlatformNames.UAP, og.Version, minVersion);
             }
 
             return og;
@@ -271,7 +278,7 @@ namespace ModernUwpDesigner
         {
             original(instance);
 
-            if (instance.TargetFramework?.IsModernUwp() is true)
+            if (instance.TargetFramework?.IsModernUwpCapable() is true)
             {
                 instance.SetCapabilityValue(PlatformCapability.SupportsPathTools, true);
                 //instance.SetCapabilityValue(PlatformCapability.OnePointPathHasSize, true);
@@ -327,7 +334,7 @@ namespace ModernUwpDesigner
                 (XamlTypes.Shape.IsAssignableFrom(instance.Type) ||
                  XamlTypes.MatrixTransform.IsAssignableFrom(instance.Type)) &&
                 instance.Type.PlatformMetadata is UIXamlPlatformMetadata metadata &&
-                metadata.TargetFramework?.IsModernUwp() is true)
+                metadata.TargetFramework?.IsModernUwpCapable() is true)
             {
                 var cache = (LiveObjectCache)_objectCacheField.GetValue(instance);
                 if (instance.ProtocolHandler.TrySendMessage<PropertyValuesHolder>(
@@ -382,7 +389,7 @@ namespace ModernUwpDesigner
             if (instance.View is { } view &&
                 view.ProjectMetadata is ManagedProjectMetadata managedProject &&
                 managedProject.PlatformMetadata is UIXamlPlatformMetadata platformMetadata &&
-                platformMetadata.TargetFramework?.IsModernUwp() is true)
+                platformMetadata.TargetFramework?.IsModernUwpCapable() is true)
             {
                 /*if (_commitEditTransaction is not null)
                 {

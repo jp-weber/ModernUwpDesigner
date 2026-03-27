@@ -43,17 +43,31 @@ namespace XSurfUwp
         {
             EnsureUserAppIXMP();
 
+            IXamlType type = null;
+
             if (xamlMetadataProvider is not null)
             {
-                return xamlMetadataProvider.GetXamlType(fullName);
+                type = xamlMetadataProvider.GetXamlType(fullName);
             }
-
-            if (GetXamlTypeByName is not null)
+            else if (GetXamlTypeByName is not null)
             {
-                return GetXamlTypeByName(userAppTypeInfoProvider, fullName);
+                type = GetXamlTypeByName(userAppTypeInfoProvider, fullName);
             }
 
-            return null;
+            // HACK: XC has a bug where it doesn't use '+' for nested types, but instead uses '.' like normal namespaces.
+            // We need to try both to workaround this.
+            if (type is null && fullName.Contains('+', StringComparison.Ordinal))
+            {
+                var altFullName = fullName.Replace('+', '.');
+                type = GetXamlType(altFullName);
+
+                if (type is not null)
+                {
+                    type = new XamlTypeWrapper(type, fullName);
+                }
+            }
+
+            return type;
         }
 
         public XmlnsDefinition[] GetXmlnsDefinitions()
