@@ -225,7 +225,7 @@ namespace ModernUwpDesigner
             link.SetWorkingDirectory(currentDir);
             link.SetShowCmd(7);
             link.SetPath("powershell");
-            link.SetArguments($"-WindowStyle Hidden \"cmd /c devenv.com" +
+            link.SetArguments($"-WindowStyle Hidden \"cmd /c devenv.com " +
                               $"{(hasRootSuffix ? $"/RootSuffix {rootSuffix} " : string.Empty)}" +
                               $"/{Constants.VSLaunchCmd} /NoSplash /Out\"");
 
