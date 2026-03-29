@@ -28,5 +28,6 @@ namespace ModernUwpDesigner
         public const int ModernUwpDesignerGroup = 0x1020;
         public const int LaunchBlendCommandId = 0x0100;
         public const int DesignInBlendCommandId = 0x0101;
+        public const int CreateBlendDesktopShortcutCommandId = 0x0102;
     }
 }

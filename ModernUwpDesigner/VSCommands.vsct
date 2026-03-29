@@ -69,6 +69,21 @@
         </Strings>
       </Button>
 
+      <Button guid="guidModernUwpDesignerPackageCmdSet" id="CreateBlendDesktopShortcutCommandId" priority="0x0100" type="Button">
+        <Parent guid="guidModernUwpDesignerPackageCmdSet" id="ModernUwpDesignerGroup" />
+        <Icon guid="ImageCatalogGuid" id="Shortcut" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <ButtonText>Create Desktop shortcut for Blend with Modern UWP Designer</ButtonText>
+          <CommandName>ModernUwpDesigner.CreateBlendDesktopShortcut</CommandName>
+          <CanonicalName>ModernUwpDesigner.CreateBlendDesktopShortcut</CanonicalName>
+          <LocCanonicalName>ModernUwpDesigner.CreateBlendDesktopShortcut</LocCanonicalName>
+        </Strings>
+      </Button>
+
       <Button guid="guidModernUwpDesignerPackageCmdSet" id="DesignInBlendCommandId" priority="0x0500" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_PROJECT_EXPLORE" />
         <Icon guid="ImageCatalogGuid" id="VisualStudioBlend" />
@@ -102,6 +117,7 @@
       <IDSymbol name="ModernUwpDesignerGroup" value="0x1020" />
       <IDSymbol name="LaunchBlendCommandId" value="0x0100" />
       <IDSymbol name="DesignInBlendCommandId" value="0x0101" />
+      <IDSymbol name="CreateBlendDesktopShortcutCommandId" value="0x0102" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

@@ -206,6 +206,32 @@ namespace ModernUwpDesigner
             }
         }
 
+        internal static void CreateDesktopShortcut()
+        {
+            var currentDir = AppDomain.CurrentDomain.BaseDirectory;
+            var isExp = PackageUtilities.IsExperimentalVersionOfVsForVsipDevelopment(out var rootSuffix);
+            var hasRootSuffix = isExp && !string.IsNullOrWhiteSpace(rootSuffix);
+            var tag = hasRootSuffix ? $" ({rootSuffix.ToUpperInvariant()})" : string.Empty;
+
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string linkPath = Path.Combine(desktopPath, $"Blend with Modern UWP Designer{tag}.lnk");
+
+            if (File.Exists(linkPath))
+                return;
+
+            IShellLink link = (IShellLink)new ShellLink();
+            link.SetDescription($"Blend for Visual Studio with Modern UWP Designer{tag}");
+            link.SetIconLocation(Path.Combine(currentDir, "Blend.exe"), 0);
+            link.SetWorkingDirectory(currentDir);
+            link.SetShowCmd(7);
+            link.SetPath("powershell");
+            link.SetArguments($"-WindowStyle Hidden \"cmd /c devenv.com" +
+                              $"{(hasRootSuffix ? $"/RootSuffix {rootSuffix} " : string.Empty)}" +
+                              $"/{Constants.VSLaunchCmd} /NoSplash /Out\"");
+
+            ((IPersistFile)link).Save(linkPath, false);
+        }
+
         private static IRunningObjectTable rot = IsBlend ? null : GetRunningObjectTable(0);
         private static IBindCtx ctx = IsBlend ? null : CreateBindCtx(0);
         private static IMoniker[] moniker = IsBlend ? null : new IMoniker[1];

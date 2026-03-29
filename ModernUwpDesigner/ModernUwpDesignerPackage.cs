@@ -96,6 +96,7 @@ namespace ModernUwpDesigner
             InitializeDesignerPackage();
             await LaunchBlendCommand.InitializeAsync(this);
             await DesignInBlendCommand.InitializeAsync(this);
+            await CreateBlendDesktopShortcutCommand.InitializeAsync(this);
         }
 
         internal static unsafe void InitializeDesignerPackage()

@@ -111,6 +111,7 @@
     <Compile Include="BlendShim\Constants.cs" />
     <Compile Include="BlendShim\NativeMethods.cs" />
     <Compile Include="Commands\DesignInBlendCommand.cs" />
+    <Compile Include="Commands\CreateBlendDesktopShortcutCommand.cs" />
     <Compile Include="Common\AppId.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\HierarchyHelpers.cs" />
