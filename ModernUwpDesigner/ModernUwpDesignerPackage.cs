@@ -28,7 +28,9 @@ using ModernUwpDesigner.Common;
 using MonoMod.RuntimeDetour;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
@@ -62,7 +64,6 @@ namespace ModernUwpDesigner
         private static Hook _incompatibleDesignerRuntimeArchitectureHook;
         private static Hook _getTargetPlatformFromProjectStorageHook;
         private static Hook _registerPlatformCapabilitiesHook;
-        //private static Hook _createPlatformConverterHook;
         private static Hook _updateHook;
         private static Hook _onBeginHook;
 
@@ -383,6 +384,8 @@ namespace ModernUwpDesigner
 
         //private static unsafe delegate*<PenAction, void> _commitEditTransaction = (delegate*<PenAction, void>)typeof(PenAction).GetMethod("CommitEditTransaction", BindingFlags.NonPublic | BindingFlags.Instance, null, [], null)?.MethodHandle.GetFunctionPointer();
 
+        //private static readonly List<WeakReference<Base2DElement>> _invalidatedElements = [];
+
         private static unsafe void OnBeginHook(OnBegin original, PenAction instance, PathEditContext pathEditContext, System.Windows.Input.MouseDevice mouseDevice)
         {
             original(instance, pathEditContext, mouseDevice);
@@ -399,6 +402,25 @@ namespace ModernUwpDesigner
 
                 var editor = instance.PathEditorTarget;
                 var element = editor.EditingElement;
+
+                /*bool alreadyInvalidated = false;
+                foreach (var weakRef in _invalidatedElements)
+                {
+                    if (weakRef.TryGetTarget(out var target))
+                    {
+                        if (!alreadyInvalidated && target == element)
+                            alreadyInvalidated = true;
+                    }
+                    else
+                    {
+                        _invalidatedElements.Remove(weakRef);
+                    }
+                }
+
+                if (alreadyInvalidated)
+                    return;
+
+                _invalidatedElements.Add(new(element));*/
 
                 element.SetValueAsWpf(PathElement.StretchProperty, System.Windows.Media.Stretch.None);
                 //element.SetMarkupValueAsWpf(PathElement.StretchProperty, System.Windows.Media.Stretch.None);
