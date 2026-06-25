@@ -1,20 +1,20 @@
-﻿using EnvDTE80;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Win32.SafeHandles;
-using ModernUwpDesigner.Common;
-using MonoMod.Utils;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System;
+using EnvDTE80;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Linq;
+using MonoMod.Utils;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using ModernUwpDesigner.Common;
+using System.Collections.Generic;
+using Microsoft.Win32.SafeHandles;
+using Microsoft.VisualStudio.Shell;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+using Microsoft.VisualStudio.Shell.Interop;
+using System.Runtime.InteropServices.ComTypes;
+
 using static ModernUwpDesigner.NativeMethods;
 
 namespace ModernUwpDesigner
